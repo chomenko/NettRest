@@ -1,0 +1,33 @@
+{
+  "name": "chomenko/nettrest",
+  "type": "extensions",
+  "description": "REST API from Nette framework",
+  "keywords": ["REST", "API", "Nette", "Doctrine", "Annotation"],
+  "homepage": "https://github.com/chomenko/nettrest",
+  "license": [],
+  "authors": [
+    {
+      "name": "Mykola Chomenko",
+      "homepage": "http://dipcom.cz",
+      "email": "mykola.chomenko@dipcom.cz"
+    }
+  ],
+  "support": {
+    "email": "mykola.chomenko@dipcom.cz"
+  },
+  "require": {
+    "php": ">=7.1",
+    "nette/di": "^2.4 || ^3.0",
+    "nette/application": "^2.4 || ^3.0",
+    "chomenko/asset": "^1.0",
+    "chomenko/inline-routing": "^1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Chomenko\\NettRest\\": "src/"
+    },
+    "files": [
+      "./src/API/API.php"
+    ]
+  }
+}

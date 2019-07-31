@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	<meta name="viewport" content="width=device-width">
+	<link rel="shortcut icon" type="image/png" href="{$basePath}/favicon.png"/>
+	<title>{ifset title}{include title|stripHtml}{else}API doc{/ifset}</title>
+
+	{foreach $assets["js"] as $file}
+		<script type="text/javascript" n:asset="$file"></script>
+	{/foreach}
+
+    {foreach $assets["css"] as $file}
+		<link rel="stylesheet" n:asset="$file"/>
+    {/foreach}
+</head>
+
+<body>
+	<header class="bg-silver d-flex flex-column flex-md-row fixed-top align-items-center p-3 px-md-4 mb-3">
+		<div class="logo">
+			<img n:asset="$assets['logo']">
+		</div>
+		<h5 class="my-0 mr-md-auto font-weight-normal">API doc</h5>
+		<nav class="my-2 my-md-0 mr-md-3">
+			<a class="p-2 text-white" href="#">Features</a>
+			<a class="p-2 text-white" href="#">Enterprise</a>
+			<a class="p-2 text-white" href="#">Support</a>
+			<a class="p-2 text-white" href="#">Pricing</a>
+		</nav>
+		<a class="btn btn-primary" href="#">Sign up</a>
+	</header>
+
+	<div class="container-fluid no-padding">
+		<div class="">
+			<nav class="col-md-2 d-none d-md-block bg-white sidebar">
+				<div class="sidebar-sticky">
+					<div class="section introduction">
+						<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-green">
+							<span>Introduction</span>
+						</h6>
+						<ul class="nav flex-column">
+							<li class="nav-item">
+								<a class="nav-link active" href="#">
+									Dashboard
+								</a>
+							</li>
+						</ul>
+					</div>
+					{$docRender->renderReferenceSections()}
+				</div>
+			</nav>
+			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 no-padding">
+				{include content}
+			</main>
+		</div>
+	</div>
+</body>
