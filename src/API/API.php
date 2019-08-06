@@ -38,7 +38,7 @@ class API extends BaseAnnotation implements IAnnotationExtension
 	 */
 	public function getExtensionService(): string
 	{
-		return RequestProvider::class;
+		return Provider::class;
 	}
 
 	/**

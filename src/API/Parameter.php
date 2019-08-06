@@ -21,7 +21,8 @@ class Parameter extends BaseAnnotation implements IParameter
 	const TYPE_BOOL = "bool";
 	const TYPE_FLOAT = "float";
 	const TYPE_DOUBLE = "double";
-	const TYPE_INIT = "init";
+	const TYPE_INT = "int";
+	const TYPE_INTEGER = "integer";
 	const TYPE_LONG = "long";
 	const TYPE_NULL = "null";
 	const TYPE_NUMERIC = "numeric";
@@ -103,7 +104,8 @@ class Parameter extends BaseAnnotation implements IParameter
 			self::TYPE_BOOL => self::TYPE_BOOL,
 			self::TYPE_FLOAT => self::TYPE_FLOAT,
 			self::TYPE_DOUBLE => self::TYPE_DOUBLE,
-			self::TYPE_INIT => self::TYPE_INIT,
+			self::TYPE_INT => self::TYPE_INT,
+			self::TYPE_INTEGER => self::TYPE_INTEGER,
 			self::TYPE_LONG => self::TYPE_LONG,
 			self::TYPE_NULL => self::TYPE_NULL,
 			self::TYPE_NUMERIC => self::TYPE_NUMERIC,

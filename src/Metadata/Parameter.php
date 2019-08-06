@@ -8,6 +8,8 @@ namespace Chomenko\NettRest\Metadata;
 
 use Nette\Utils\Html;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 class Parameter extends MetaHierarchy
 {
@@ -53,6 +55,21 @@ class Parameter extends MetaHierarchy
 	protected $type;
 
 	/**
+	 * @var string|null
+	 */
+	protected $class;
+
+	/**
+	 * @var mixed
+	 */
+	protected $value;
+
+	/**
+	 * @var bool
+	 */
+	protected $valid = FALSE;
+
+	/**
 	 * Parameter constructor.
 	 * @param string $name
 	 * @param string $fullName
@@ -78,7 +95,7 @@ class Parameter extends MetaHierarchy
 	 */
 	public function addRule(Constraint $rules): void
 	{
-		$this->rules = $rules;
+		$this->rules[] = $rules;
 	}
 
 	/**
@@ -220,6 +237,54 @@ class Parameter extends MetaHierarchy
 		}
 
 		return $wrapped;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getClass(): ?string
+	{
+		return $this->class;
+	}
+
+	/**
+	 * @param string|null $class
+	 */
+	public function setClass(?string $class): void
+	{
+		$this->class = $class;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getValue()
+	{
+		return $this->value;
+	}
+
+	/**
+	 * @param mixed $value
+	 */
+	public function setValue($value): void
+	{
+		$this->value = $value;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isValid(): bool
+	{
+		return $this->valid;
+	}
+
+	/**
+	 * @param bool $valid
+	 */
+	public function setValid(bool $valid): void
+	{
+		$this->valid = $valid;
 	}
 
 }

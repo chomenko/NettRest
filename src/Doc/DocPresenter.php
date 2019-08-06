@@ -35,6 +35,8 @@ class DocPresenter extends BasePresenter
 	{
 		$this->metadata = $metadata;
 		$this->docRender = $docRender;
+//		dump($metadata);
+//		exit;
 	}
 
 	/**

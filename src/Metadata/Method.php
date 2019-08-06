@@ -9,6 +9,9 @@ namespace Chomenko\NettRest\Metadata;
 use Chomenko\InlineRouting\Route;
 use Chomenko\NettRest\Config;
 use Nette\Utils\Html;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Validator\ValidatorBuilder;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Method extends MetaHierarchy
 {
@@ -264,4 +267,30 @@ class Method extends MetaHierarchy
 		return $data;
 	}
 
+	/**
+	 * @param Parameter[] $parameters
+	 * @return bool
+	 */
+	private function recursiveValid(array $parameters): bool
+	{
+		foreach ($parameters as $parameter) {
+			if (!$parameter->isValid()) {
+				return FALSE;
+			}
+			if (!$this->recursiveValid($parameter->getParameters())) {
+				return FALSE;
+			}
+		}
+		return TRUE;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isValid(): bool
+	{
+		return $this->recursiveValid($this->parameters);
+	}
+
 }
+

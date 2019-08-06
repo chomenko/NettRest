@@ -19,7 +19,6 @@ class Metadata
 	 */
 	private $scheme = [
 		"methods" => [],
-		"parameters" => [],
 		"sections" => [],
 	];
 
@@ -72,9 +71,6 @@ class Metadata
 		if (!array_key_exists($section, $this->scheme["sections"])) {
 			$this->scheme["sections"][$section] = [];
 		}
-
-		$this->scheme["sections"][$section][] = $method;
-		$this->scheme["methods"][$route->getHash()] = $method;
 		return $method;
 	}
 
@@ -135,6 +131,11 @@ class Metadata
 	{
 		$fullName = $parent->getFullName() . "." . $annotation->getName();
 		$parameter = new Parameter($annotation->getName(), $fullName, $annotation->getDescription());
+		$parameter->setRequired($annotation->isRequired());
+
+		foreach ($annotation->getRules() as $rule) {
+			$parameter->addRule($rule);
+		}
 
 		if ($reflection instanceof \ReflectionMethod) {
 			$props = $reflection->getParameters();
@@ -174,6 +175,7 @@ class Metadata
 		$parameter->setType($annotation->getType());
 		if (class_exists($class)) {
 			$parameter->setType(API\Parameter::TYPE_OBJECT);
+			$parameter->setClass($class);
 			$reflection = new \ReflectionClass($class);
 			$properties = $reflection->getProperties();
 
@@ -187,7 +189,6 @@ class Metadata
 				}
 			}
 		}
-		$this->scheme["parameters"][$fullName] = $parameter;
 		return $parameter;
 	}
 
@@ -212,6 +213,16 @@ class Metadata
 	}
 
 	/**
+	 * @param Method $method
+	 */
+	public function addSchemeMethod(Method $method)
+	{
+		$hash = $method->getRoute()->getHash();
+		$this->scheme["methods"][$hash] = $method;
+		$this->scheme["sections"][$method->getSection()][$hash] = $method;
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getScheme(): array
@@ -220,7 +231,7 @@ class Metadata
 	}
 
 	/**
-	 * @return array
+	 * @return Method[][]
 	 */
 	public function getSections(): array
 	{

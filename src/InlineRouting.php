@@ -9,11 +9,13 @@ namespace Chomenko\NettRest;
 use Chomenko\InlineRouting\Events;
 use Chomenko\NettRest\API\IAnnotation;
 use Chomenko\NettRest\Metadata\Metadata;
+use Chomenko\NettRest\Metadata\Method;
 use Doctrine\Common\Annotations\Reader;
 use Kdyby\Events\Subscriber;
 use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
 
-class RoutingProvider implements Subscriber
+class InlineRouting implements Subscriber
 {
 
 	/**
@@ -39,6 +41,7 @@ class RoutingProvider implements Subscriber
 	{
 		return [
 			Events::INITIALIZE_ROUTE => "onInitializeRoute",
+			Events::INITIALIZED => "onInitialized",
 		];
 	}
 
@@ -67,7 +70,7 @@ class RoutingProvider implements Subscriber
 		if (!$apiMethod) {
 			return;
 		}
-
+		$route->setOption(Provider::ROUTE_METHOD_KEY, $apiMethod);
 		foreach ($annotations as $annotation) {
 			if ($annotation instanceof API\IParameter) {
 				$parameter = $this->metadata->createParameter($apiMethod, $annotation, $method);
@@ -91,6 +94,19 @@ class RoutingProvider implements Subscriber
 				}
 				$parameter = $this->metadata->createParameter($apiMethod, $annotation, $method);
 				$apiMethod->addParameter($parameter);
+			}
+		}
+	}
+
+	/**
+	 * @param RouteCollection $collection
+	 */
+	public function onInitialized(RouteCollection $collection)
+	{
+		foreach ($collection as $route) {
+			$method = $route->getOption(Provider::ROUTE_METHOD_KEY);
+			if ($method instanceof Method) {
+				$this->metadata->addSchemeMethod($method);
 			}
 		}
 	}

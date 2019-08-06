@@ -6,18 +6,10 @@
 
 namespace Chomenko\NettRest;
 
+use Nette\Http\Request;
+
 class Config
 {
-
-	/**
-	 * @var array
-	 */
-	private $mappings = [];
-
-	/**
-	 * @var string
-	 */
-	private $module = "Api";
 
 	/**
 	 * @var string|null
@@ -27,30 +19,21 @@ class Config
 	/**
 	 * Config constructor.
 	 * @param array $settings
+	 * @param Request $request
 	 */
-	public function __construct(array $settings)
+	public function __construct(array $settings, Request $request)
 	{
 		foreach (get_object_vars($this) as $name => $value) {
 			if (array_key_exists($name, $settings)) {
 				$this->{$name} = $settings[$name];
 			}
 		}
-	}
 
-	/**
-	 * @return array
-	 */
-	public function getMappings(): array
-	{
-		return $this->mappings;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function getModule(): string
-	{
-		return $this->module;
+		if (!$this->host) {
+			$url = $request->getUrl();
+			$scheme = $url->getScheme();
+			$this->host = (!empty($scheme) ? $scheme . "://" : "" ). $url->getHost();
+		}
 	}
 
 	/**
