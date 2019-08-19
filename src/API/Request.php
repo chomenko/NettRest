@@ -6,14 +6,14 @@
 
 namespace Chomenko\NettRest\API;
 
-use Chomenko\NettRest\Metadata\Parameter;
 use Doctrine\Common\Annotations\Annotation;
+use InvalidArgumentException;
 
 /**
  * @Annotation
  * @Target({"METHOD"})
  */
-class Response extends BaseAnnotation
+class Request extends BaseAnnotation
 {
 
 	/**
@@ -25,6 +25,11 @@ class Response extends BaseAnnotation
 	 * @var Parameter[]
 	 */
 	private $parameters = [];
+
+	/**
+	 * @var string|null
+	 */
+	private $into;
 
 	/**
 	 * @var string|null
@@ -53,7 +58,7 @@ class Response extends BaseAnnotation
 	}
 
 	/**
-	 * @return \Chomenko\NettRest\API\Parameter[]
+	 * @return Parameter[]
 	 */
 	public function getParameters(): array
 	{
@@ -67,7 +72,7 @@ class Response extends BaseAnnotation
 	{
 		foreach ($parameters as $parameter) {
 			if (!$parameter instanceof IParameter) {
-				throw new \InvalidArgumentException("Parameter must instanceof " . IParameter::class);
+				throw new InvalidArgumentException("Parameter must instanceof " . IParameter::class);
 			}
 		}
 		$this->parameters = $parameters;
@@ -135,6 +140,22 @@ class Response extends BaseAnnotation
 	public function setCollection(bool $collection): void
 	{
 		$this->collection = $collection;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getInto(): ?string
+	{
+		return $this->into;
+	}
+
+	/**
+	 * @param string|null $into
+	 */
+	public function setInto(?string $into): void
+	{
+		$this->into = $into;
 	}
 
 }

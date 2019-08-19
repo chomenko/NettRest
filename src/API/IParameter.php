@@ -15,9 +15,9 @@ interface IParameter
 	public function getDescription(): ?string;
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
-	public function getName(): string;
+	public function getName(): ?string;
 
 	/**
 	 * @return array
@@ -30,9 +30,9 @@ interface IParameter
 	public function setGroups(array $groups): void;
 
 	/**
-	 * @return bool
+	 * @return bool|array
 	 */
-	public function isRequired(): bool;
+	public function getRequired();
 
 	/**
 	 * @return mixed
@@ -58,5 +58,15 @@ interface IParameter
 	 * @param string $type
 	 */
 	public function setType(string $type): void;
+
+	/**
+	 * @return bool
+	 */
+	public function isCollection(): bool;
+
+	/**
+	 * @param bool $collection
+	 */
+	public function setCollection(bool $collection): void;
 
 }

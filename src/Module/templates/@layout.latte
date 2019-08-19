@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	<meta name="viewport" content="width=device-width">
+	<link rel="shortcut icon" type="image/png" href="{$basePath}/favicon.png"/>
+	<title>{ifset title}{include title|stripHtml}{else}{$config->getTitle()}{/ifset}</title>
+
+	{foreach $assets["js"] as $file}
+		<script type="text/javascript" n:asset="$file"></script>
+	{/foreach}
+
+    {foreach $assets["css"] as $file}
+		<link rel="stylesheet" n:asset="$file"/>
+    {/foreach}
+</head>
+
+<body>
+	<header class="nav-header bg-silver d-flex flex-column flex-md-row fixed-top align-items-center p-3 px-md-4 mb-3">
+		<div class="logo">
+			<img n:asset="$config->getLogo()">
+		</div>
+		<h5 class="my-0 mr-md-auto font-weight-normal">{$config->getBrand()}</h5>
+	</header>
+	<div class="container-fluid no-padding">
+		<div class="">
+			{control apiWrapped:bookmark}
+			<main role="main" class="col-md-9 ml-sm-auto col-lg-10 no-padding">
+				{include content}
+			</main>
+		</div>
+	</div>
+</body>

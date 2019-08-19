@@ -1,0 +1,20 @@
+<div class="col-lg-6 left no-padding" data-bookmark="{$column->getLink()}">
+	<h1 class="section-title border-bottom">{$column->getLabel()}</h1>
+	<div class="breadcrumb">{$column->getBreadcrumb()}</div>
+	<div class="section-padding">
+		<p class="section-description">{$column->getDescription()}</p>
+		{if $method}
+			{var $requestAttributes = $control->getHtmlFieldsStructure($method->getRequest())}
+			{if $requestAttributes}
+				<p><b>Request attributes</b></p>
+				{$requestAttributes}
+            {/if}
+
+        	{var $responseAttributes = $control->getHtmlFieldsStructure($method->getResponse())}
+            {if $responseAttributes}
+				<p><b>Response attributes</b></p>
+                {$responseAttributes}
+            {/if}
+		{/if}
+	</div>
+</div>

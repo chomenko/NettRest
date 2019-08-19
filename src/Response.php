@@ -10,6 +10,7 @@ class Response extends \stdClass
 {
 	const ERROR_TYPE_SERVER = "server-error";
 	const ERROR_TYPE_REQUEST = "request";
+	const ERROR_TYPE_RESPONSE = "response";
 	const ERROR_TYPE_PARAMETER = "parameter";
 	const ERROR_TYPE_ATTRIBUTE = "attribute";
 
@@ -78,10 +79,34 @@ class Response extends \stdClass
 	{
 		return [
 			"code" => $this->code,
-			"data" => [],
+			"data" => $this->data,
 			"errors" => $this->errors,
 			"messages" => [],
 		];
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getData(): array
+	{
+		return $this->data;
+	}
+
+	/**
+	 * @param array $data
+	 */
+	public function setData(array $data): void
+	{
+		$this->data = $data;
+	}
+
+	/**
+	 * @param array $data
+	 */
+	public function addItem(array $data): void
+	{
+		$this->data[] = $data;
 	}
 
 }

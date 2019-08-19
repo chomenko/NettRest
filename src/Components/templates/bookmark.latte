@@ -1,0 +1,25 @@
+<nav class="col-md-2 d-none d-md-block bg-white sidebar">
+	<div class="sidebar-sticky bookmark">
+        {foreach $layout->getSections() as $section}
+			<div class="section">
+				<h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1">
+					<a class="text-green" href="{$section->getLink()}"><span>{$section->getName()}</span></a>
+				</h6>
+				<ul class="nav flex-column">
+					{define columns}
+						<li class="nav-item" n:foreach="$columns as $column">
+							<a class="nav-link" href="{$column->getLink()}">
+								{$column->getLabel()}
+							</a>
+							<ul n:if="$column->getColumns()" class="nav flex-column">
+                                {include columns, columns => $column->getColumns()}
+							</ul>
+						</li>
+                    {/define}
+					{include columns, columns => $section->getColumns()}
+				</ul>
+			</div>
+        {/foreach}
+	</div>
+</nav>
+

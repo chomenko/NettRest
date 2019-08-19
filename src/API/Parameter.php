@@ -47,7 +47,7 @@ class Parameter extends BaseAnnotation implements IParameter
 	protected $name;
 
 	/**
-	 * @var bool
+	 * @var bool|array
 	 */
 	protected $required = FALSE;
 
@@ -82,15 +82,9 @@ class Parameter extends BaseAnnotation implements IParameter
 	private $parameters = [];
 
 	/**
-	 * @param array $data
+	 * @var bool
 	 */
-	public function __construct(array $data)
-	{
-		if (isset($data["value"])) {
-			$this->setName($data["value"]);
-		}
-		parent::__construct($data);
-	}
+	private $collection = FALSE;
 
 	/**
 	 * @return array
@@ -175,9 +169,9 @@ class Parameter extends BaseAnnotation implements IParameter
 	}
 
 	/**
-	 * @return string
+	 * @return string|null
 	 */
-	public function getName(): string
+	public function getName(): ?string
 	{
 		return $this->name;
 	}
@@ -191,17 +185,17 @@ class Parameter extends BaseAnnotation implements IParameter
 	}
 
 	/**
-	 * @return bool
+	 * @return bool|array
 	 */
-	public function isRequired(): bool
+	public function getRequired()
 	{
 		return $this->required;
 	}
 
 	/**
-	 * @param bool $required
+	 * @param bool|array $required
 	 */
-	public function setRequired(bool $required): void
+	public function setRequired($required): void
 	{
 		$this->required = $required;
 	}
@@ -255,6 +249,22 @@ class Parameter extends BaseAnnotation implements IParameter
 			throw new \BadMethodCallException(sprintf('Unsupported type "%s" or or no class was found on annotation "%s".', $type, get_class($this)));
 		}
 		$this->type = $type;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isCollection(): bool
+	{
+		return $this->collection;
+	}
+
+	/**
+	 * @param bool $collection
+	 */
+	public function setCollection(bool $collection): void
+	{
+		$this->collection = $collection;
 	}
 
 }

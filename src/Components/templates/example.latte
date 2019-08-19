@@ -1,0 +1,25 @@
+<div class="col-lg-6 right no-padding">
+	{if $method}
+		<div class="api-url section-padding border-bottom border-top">
+			<div class="methods">
+				{foreach $control->getMethodAccessMethods($method) as $routeMethod}
+					<span class="badge badge-success">{$routeMethod}</span>
+				{/foreach}
+			</div>
+			<span>{$control->getMethodUrl($method)}</span>
+		</div>
+		<div class="section-padding border-bottom">
+            {var $urlParameter = $control->getHtmlFieldsStructure($method->getRequest(), true)}
+            {if $urlParameter}
+				<p><b>URL parameters</b></p>
+                {$urlParameter}
+            {/if}
+		</div>
+    	{var $response = $method->getResponse()}
+		<div class="section-padding border-bottom" n:if="$response">
+			<p><b>Response example</b></p>
+			<p class="section-description" n:if="!empty($response->getDescription())">{$response->getDescription()}</p>
+			{$control->getHtmlResponseExample($response)}
+		</div>
+	{/if}
+</div>
