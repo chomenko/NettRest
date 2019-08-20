@@ -21,8 +21,6 @@ use Doctrine\ORM\EntityManager;
 use Kdyby\Events\Subscriber;
 use Nette\Application\AbortException;
 use Nette\Application\UI\Presenter;
-use Nette\Caching\Cache;
-use Nette\Caching\IStorage;
 use ReflectionMethod;
 use ReflectionClass;
 use ReflectionException;
@@ -31,17 +29,6 @@ use Chomenko\InlineRouting\Exceptions\RouteException;
 
 class InlineRouting extends Extension implements Subscriber
 {
-
-
-	/**
-	 * @var Reader
-	 */
-	private $reader;
-
-	/**
-	 * @var array
-	 */
-	private $methods = [];
 
 	/**
 	 * @var Structure
@@ -65,12 +52,10 @@ class InlineRouting extends Extension implements Subscriber
 
 	public function __construct(
 		EntityManager $entityManager,
-		Reader $reader,
 		Structure $structure,
 		Response $response,
 		ResponseDriver $responseBuilder
 	) {
-		$this->reader = $reader;
 		$this->structure = $structure;
 		$this->response = $response;
 		$this->entityManager = $entityManager;
