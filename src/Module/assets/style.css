@@ -82,6 +82,9 @@ body{
 .content-section .right .border-top {
 	border-top: 1px solid #3a3e4d !important;
 }
+.content-section .attributes{
+	padding-left: 20px;
+}
 .content-section .right .attributes .name{
 	color: #41EAD4;
 }
@@ -118,6 +121,32 @@ body{
 }
 .content-section  .attributes li{
 	font-size: 13px;
+	list-style-type: square;
+}
+
+.content-section  .attributes li .badge{
+	font-size: 10px;
+	line-height: 11px;
+	margin-left: 5px;
+}
+
+.content-section  .attributes li .type{
+	margin-left: 5px;
+}
+
+.content-section  .attributes li .attribute{
+	border-bottom: 1px solid #00000012;
+	padding: 6px 0px 6px 0px;
+}
+
+.content-section  .attributes li .attribute .name{
+	font-style: italic;
+	padding-right: 20px;
+	font-weight: 400;
+}
+
+.content-section  .attributes li .attribute .name.required{
+	font-weight: 700;
 }
 
 .content-section  .section-description{

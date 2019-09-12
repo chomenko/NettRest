@@ -68,6 +68,11 @@ class Field implements IStructure
 	private $recursive = FALSE;
 
 	/**
+	 * @var Field[]
+	 */
+	private $collection = [];
+
+	/**
 	 * Structure constructor.
 	 * @param FieldsStructure|Field $parent
 	 * @param Parameter $parameter
@@ -89,6 +94,20 @@ class Field implements IStructure
 	public function getName(): string
 	{
 		return $this->name;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFullName(): string
+	{
+		$path = [$this->name];
+		$parent = $this->parent;
+		while ($parent instanceof Field) {
+			array_unshift($path, $parent->getName());
+			$parent = $parent->getParent();
+		}
+		return implode(".", $path);
 	}
 
 	/**
@@ -237,33 +256,51 @@ class Field implements IStructure
 	 */
 	public function validate(ValidatorInterface $validator = NULL)
 	{
-		$this->valid = TRUE;
-		if ($this->isRequired() && !$this->isUsedInRequest()) {
-			$type = $this->isUrlParameter() ? "parameter" : "attribute";
-			$this->addError("Missing {$type} '{$this->getName()}'");
-			$this->valid = FALSE;
-			return;
-		} elseif (!$this->isRequired() && !$this->isUsedInRequest()) {
-			return;
+		/** @var Field[] $fields */
+		$fields = [$this];
+		if ($this->collection) {
+			array_push($fields, ...$this->getCollection());
 		}
 
-		if (!$validator) {
-			$validator = Validation::createValidator();
-		}
+		foreach ($fields as $field) {
+			$field->setValid(TRUE);
+			$parameter = $field->getParameter();
 
-		$parameter = $this->getParameter();
-		$type = $parameter->getType();
-		$rules = $parameter->getRules();
-		if (!empty($type) && $type !== API\Parameter::TYPE_MIXED && $type !== API\Parameter::TYPE_OBJECT) {
-			$constraint = new Type(["type" => $type]);
-			$rules[] = $constraint;
-		}
-
-		foreach ($validator->validate($this->getValue(), $rules) as $violation) {
-			if ($violation instanceof ConstraintViolationInterface) {
-				$this->errors[] = $violation->getMessage();
+			if ($field->isUsedInRequest() && !$parameter->isNullable()) {
+				if ($field->getValue() === NULL) {
+					$field->addError("This value can't be null.");
+					$field->setValid(FALSE);
+					return;
+				}
 			}
-			$this->valid = FALSE;
+
+			if ($field->isRequired() && !$field->isUsedInRequest()) {
+				$type = $field->isUrlParameter() ? "parameter" : "attribute";
+				$field->addError("Missing {$type} '{$field->getName()}'");
+				$field->setValid(FALSE);
+				return;
+			} elseif (!$field->isRequired() && !$field->isUsedInRequest()) {
+				return;
+			}
+
+			if (!$validator) {
+				$validator = Validation::createValidator();
+			}
+
+
+			$type = $parameter->getType();
+			$rules = $parameter->getRules();
+			if (!empty($type) && $type !== API\Parameter::TYPE_MIXED && $type !== API\Parameter::TYPE_OBJECT) {
+				$constraint = new Type(["type" => $type]);
+				$rules[] = $constraint;
+			}
+
+			foreach ($validator->validate($field->getValue(), $rules) as $violation) {
+				if ($violation instanceof ConstraintViolationInterface) {
+					$field->addError($violation->getMessage());
+				}
+				$field->setValid(FALSE);
+			}
 		}
 	}
 
@@ -291,6 +328,22 @@ class Field implements IStructure
 	public function setRecursive(bool $recursive): void
 	{
 		$this->recursive = $recursive;
+	}
+
+	/**
+	 * @return Field[]
+	 */
+	public function getCollection(): array
+	{
+		return $this->collection;
+	}
+
+	/**
+	 * @param Field $field
+	 */
+	public function addCollectionItem(Field $field): void
+	{
+		$this->collection[] = $field;
 	}
 
 }

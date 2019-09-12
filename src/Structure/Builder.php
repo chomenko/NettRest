@@ -90,6 +90,15 @@ class Builder
 		$parameter->setExample($annotation->getExample());
 		$parameter->setCollection($annotation->isCollection());
 		$parameter->setType($annotation->getType());
+		$parameter->setNullable($annotation->isNullable());
+
+		$setter = $annotation->getSetter();
+		if ($setter) {
+			$parameter->setSetter();
+		}
+
+		$parameter->setType($annotation->getType());
+
 
 		$class = $annotation->getType();
 		if (class_exists($class)) {

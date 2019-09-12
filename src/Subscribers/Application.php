@@ -6,13 +6,11 @@
 
 namespace Chomenko\NettRest\Subscribers;
 
-use Chomenko\InlineRouting\Exceptions\MethodNotAllowedException;
 use Chomenko\InlineRouting\Route;
 use Chomenko\InlineRouting\Routing;
 use Chomenko\NettRest\Exceptions\ApiException;
 use Chomenko\InlineRouting\Exceptions\BadRequestException;
 use Chomenko\NettRest\Response;
-use Chomenko\NettRest\Structure\Method;
 use Chomenko\NettRest\Structure\Structure;
 use Kdyby\Events\Subscriber;
 use Nette\Application\AbortException;
@@ -21,6 +19,7 @@ use Nette\Application\Responses\JsonResponse;
 use Nette\Application\UI\Presenter;
 use Nette\Http\IRequest;
 use Nette\Http\IResponse;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Tracy\ILogger;
 
 class Application implements Subscriber
@@ -107,11 +106,6 @@ class Application implements Subscriber
 		$presenter = $application->getPresenter();
 		$apiRequest = FALSE;
 		$request = end($requests);
-
-
-//		if ($this->requestBuilder->getContentType() !== "application/json") {
-//			return;
-//		}
 
 		if ($request) {
 			$route = $request->getParameter("_route");

@@ -9,6 +9,7 @@ namespace Chomenko\NettRest\Structure;
 use Chomenko\InlineRouting\Arguments;
 use Chomenko\NettRest\Exceptions\ApiException;
 use Chomenko\NettRest\Response;
+use Doctrine\Common\Collections\ArrayCollection;
 use Nette\Application\BadRequestException;
 use Nette\Utils\Json;
 use Nette\Http;
@@ -92,11 +93,28 @@ class Request extends FieldsStructure
 			$value = $this->decodeValue($value);
 			$field->setValue($value);
 			$field->setUsedInRequest($used);
-			$field->validate();
 
-			if ($field->getFields() && $used) {
-				$this->applyRaws($field->getFields(), $urlParams, is_array($value) ? $value : [], $parameter);
+			if ($parameter->isCollection()) {
+				if (is_array($value)) {
+					$first = TRUE;
+					foreach ($value as $data) {
+						if (!$first) {
+							$cloneField = clone $field;
+							$this->applyRaws($cloneField->getFields(), $urlParams, is_array($data) ? $data : [], $parameter);
+							$field->addCollectionItem($cloneField);
+						} else {
+							$this->applyRaws($field->getFields(), $urlParams, is_array($data) ? $data : [], $parameter);
+							$first = FALSE;
+						}
+					}
+				}
+			} else {
+				if ($field->getFields() && $used) {
+					$this->applyRaws($field->getFields(), $urlParams, is_array($value) ? $value : [], $parameter);
+				}
 			}
+
+			$field->validate();
 		}
 	}
 
@@ -141,13 +159,17 @@ class Request extends FieldsStructure
 	/**
 	 * @param Field $field
 	 * @param mixed $default
+	 * @param bool $ignoreCollection
 	 * @return mixed
 	 * @throws \ReflectionException
 	 */
-	protected function createArgument(Field $field, $default = NULL)
+	protected function createArgument(Field $field, $default = NULL, $ignoreCollection = FALSE)
 	{
+
+
 		$parameter = $field->getParameter();
-		if ($parameter->getType() === "object") {
+
+		if ($parameter->getType() === "object" && ((!$parameter->isCollection() && !$ignoreCollection)) || ($parameter->isCollection() && $ignoreCollection)) {
 			$class = $parameter->getTypeClass();
 			$reflection = new \ReflectionClass($class);
 			if ($default instanceof $class) {
@@ -161,6 +183,17 @@ class Request extends FieldsStructure
 			}
 			$this->setFieldsInObject($reflection, $field->getFields(), $object);
 			return $object;
+		} elseif ($parameter->isCollection()) {
+			$collection = new ArrayCollection();
+			$fields = [$field];
+			if ($field->getCollection()) {
+				array_push($fields, ...$field->getCollection());
+			}
+			foreach ($fields as $param) {
+				$data = $this->createArgument($param, NULL, TRUE);
+				$collection->add($data);
+			}
+			return $collection;
 		} elseif ($field->getParent() instanceof Request && $field->getParent()->getInto()) {
 			if (is_object($default)) {
 				$reflection = new \ReflectionClass(get_class($default));
@@ -169,6 +202,10 @@ class Request extends FieldsStructure
 			} elseif (is_array($default)) {
 				//TODO::dopsat
 			}
+		}
+
+		if (is_object($default)) {
+			return $default;
 		}
 		return $field->getValue();
 	}
@@ -192,6 +229,7 @@ class Request extends FieldsStructure
 			$value = $this->createArgument($field);
 			$property = $reflection->getProperty($name);
 			$property->setAccessible(TRUE);
+//			var_dump($value);
 			$property->setValue($object, $value);
 			$property->setAccessible(FALSE);
 		}
@@ -227,6 +265,11 @@ class Request extends FieldsStructure
 			$fields = $this->fields;
 		}
 		foreach ($fields as $parameter) {
+			if ($parameter->getParameter()->isCollection()) {
+				if (!$this->isValid($parameter->getCollection())) {
+					return FALSE;
+				}
+			}
 			if (!$parameter->isValid()) {
 				return FALSE;
 			}
@@ -250,8 +293,8 @@ class Request extends FieldsStructure
 		foreach ($fields as $name => $field) {
 			if ($field instanceof Field && !$field->isValid()) {
 				$errors[] = $field;
-				$this->getErrorFields($errors, $field->getFields());
 			}
+			$this->getErrorFields($errors, $field->getFields());
 		}
 		return $errors;
 	}

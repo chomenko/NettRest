@@ -55,6 +55,16 @@ interface IParameter
 	public function getType(): string;
 
 	/**
+	 * @return boolean
+	 */
+	public function isNullable(): bool;
+
+	/**
+	 * @return string|null
+	 */
+	public function getSetter(): ?string;
+
+	/**
 	 * @param string $type
 	 */
 	public function setType(string $type): void;

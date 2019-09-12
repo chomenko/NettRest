@@ -68,6 +68,11 @@ class Parameter
 	protected $collection = FALSE;
 
 	/**
+	 * @var bool
+	 */
+	protected $nullable = FALSE;
+
+	/**
 	 * Parameter constructor.
 	 * @param string $name
 	 */
@@ -271,6 +276,22 @@ class Parameter
 	public function hasType(string $type)
 	{
 		return $this->type === $type;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isNullable(): bool
+	{
+		return $this->nullable;
+	}
+
+	/**
+	 * @param bool $nullable
+	 */
+	public function setNullable(bool $nullable): void
+	{
+		$this->nullable = $nullable;
 	}
 
 }

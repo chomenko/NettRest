@@ -77,6 +77,16 @@ class Parameter extends BaseAnnotation implements IParameter
 	private $type = self::TYPE_MIXED;
 
 	/**
+	 * @var bool
+	 */
+	private $nullable = FALSE;
+
+	/**
+	 * @var string|null
+	 */
+	private $setter;
+
+	/**
 	 * @var array
 	 */
 	private $parameters = [];
@@ -265,6 +275,38 @@ class Parameter extends BaseAnnotation implements IParameter
 	public function setCollection(bool $collection): void
 	{
 		$this->collection = $collection;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isNullable(): bool
+	{
+		return $this->nullable;
+	}
+
+	/**
+	 * @param bool $nullable
+	 */
+	public function setNullable(bool $nullable): void
+	{
+		$this->nullable = $nullable;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getSetter(): ?string
+	{
+		return $this->setter;
+	}
+
+	/**
+	 * @param string $setter
+	 */
+	public function setSetter(string $setter): void
+	{
+		$this->setter = $setter;
 	}
 
 }

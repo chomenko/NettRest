@@ -26,6 +26,7 @@ use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\Routing\RouteCollection;
 use Chomenko\InlineRouting\Exceptions\RouteException;
+use Tracy\Debugger;
 
 class InlineRouting extends Extension implements Subscriber
 {
@@ -115,15 +116,16 @@ class InlineRouting extends Extension implements Subscriber
 			return;
 		}
 
+		Debugger::$showBar = FALSE;
+
 		$request = $method->getRequest();
 		$request->execute($presenter->getHttpRequest(), $arguments, $parameters);
 
 		foreach ($request->getErrorFields() as $errorField) {
-			$parameter = $errorField->getParameter();
 			foreach ($errorField->getErrors() as $error) {
 				$this->response->addError(
 					$error,
-					$parameter->getName(),
+					$errorField->getFullName(),
 					$errorField->isUrlParameter() ? Response::ERROR_TYPE_PARAMETER : Response::ERROR_TYPE_ATTRIBUTE
 				);
 			}

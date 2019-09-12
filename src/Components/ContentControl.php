@@ -126,9 +126,17 @@ class ContentControl extends Control implements ContentInterface
 
 			$parameter = $field->getParameter();
 			$li = Html::el("li");
-			$li->addHtml(Html::el("b", [
-				"class" => "name",
+			$liBody = Html::el("div", ["class" => "attribute"]);
+			$li->addHtml($liBody);
+
+
+			$liBody->addHtml(Html::el("span", [
+				"class" => "name " . ($parameter->isRequired() && $field->getFieldStructure() instanceof Request ? "required" : ""),
 			])->setText($field->getName()));
+
+
+			$liBody->addHtml(Html::el("span", ["class" => "description"])
+				->setHtml(" " . $parameter->getDescription()));
 
 			$type = $parameter->getType();
 			if ($field->getFields()) {
@@ -139,19 +147,25 @@ class ContentControl extends Control implements ContentInterface
 			}
 
 			$structure = $field->getFieldStructure();
-			$types = " " . $type;
+
+			$types = Html::el("span", ["class" => "float-right"]);
+			$liBody->addHtml($types);
+
+			$types->addHtml(Html::el("code", ["class" => "type"])
+				->setText($type));
+
 			if ($structure instanceof Request) {
-				$types .= ":" . ($field->isRequired() ? "required" : "optional");
+				$types->addHtml(Html::el("span", ["class" => "required badge " . ($field->isRequired() ? "badge-warning" : "badge-info")])
+					->setText(($field->isRequired() ? "required" : "optional")));
 			}
-			if ($field->isRecursive()) {
-				$types .= ":recursive";
-			}
+//			if ($field->isRecursive()) {
+//				$types .= ":recursive";
+//			}
 
-			$li->addHtml(Html::el("code")
-				->setText($types));
+//			$liBody->addHtml(Html::el("code")
+//				->setText($types));
 
-			$li->addHtml(Html::el("span")
-				->setText(" " . $parameter->getDescription()));
+
 			$wrapped->addHtml($li);
 
 			if (!$field->isRecursive()) {
