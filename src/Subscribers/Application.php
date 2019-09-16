@@ -114,16 +114,18 @@ class Application implements Subscriber
 			}
 		}
 
-		if ($exception instanceof MethodNotAllowedException) {
-			$apiRequest = TRUE;
-			foreach ($exception->getRoutes() as $name => $method) {
-				$route = $this->routing->getRoute($name);
-				if (!$route->getOption(self::ROUTE_METHOD_KEY)) {
-					$apiRequest = FALSE;
-					break;
-				}
-			}
-		}
+//		if ($exception instanceof MethodNotAllowedException) {
+//			$apiRequest = TRUE;
+//			dump($exception);
+//			exit;
+//			foreach ($exception->getRoutes() as $name => $method) {
+//				$route = $this->routing->getRoute($name);
+//				if (!$route->getOption(self::ROUTE_METHOD_KEY)) {
+//					$apiRequest = FALSE;
+//					break;
+//				}
+//			}
+//		}
 
 		if (!$apiRequest) {
 			return;

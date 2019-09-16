@@ -87,6 +87,11 @@ class Parameter extends BaseAnnotation implements IParameter
 	private $setter;
 
 	/**
+	 * @var string|null
+	 */
+	private $getter;
+
+	/**
 	 * @var array
 	 */
 	private $parameters = [];
@@ -307,6 +312,22 @@ class Parameter extends BaseAnnotation implements IParameter
 	public function setSetter(string $setter): void
 	{
 		$this->setter = $setter;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getGetter(): ?string
+	{
+		return $this->getter;
+	}
+
+	/**
+	 * @param string|null $getter
+	 */
+	public function setGetter(?string $getter): void
+	{
+		$this->getter = $getter;
 	}
 
 }

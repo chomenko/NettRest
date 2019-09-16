@@ -196,11 +196,7 @@ class Structure
 	 */
 	public function addParameter(Parameter $parameter): void
 	{
-		$name = NULL;
-		if ($parameter->getDeclareClass() && $parameter->getDeclareProperty()) {
-			$name = $parameter->getDeclareClass() . "::" . $parameter->getDeclareProperty();
-		}
-		$this->parameters[$name == NULL ? count($this->parameters) : $name] = $parameter;
+		$this->parameters[] = $parameter;
 	}
 
 	/**

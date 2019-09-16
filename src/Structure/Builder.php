@@ -72,15 +72,15 @@ class Builder
 	 */
 	public function buildParameter(API\IParameter $annotation, Reflector $reflection): Parameter
 	{
-		if ($reflection instanceof ReflectionProperty) {
-			$className = $reflection->getDeclaringClass()->getName();
-			$propertyName = $reflection->getName();
-			$parameters = $this->structure->getParameters();
-			$key = $className . "::" . $propertyName;
-			if (array_key_exists($key, $parameters)) {
-				return $parameters[$key];
-			}
-		}
+//		if ($reflection instanceof ReflectionProperty) {
+//			$className = $reflection->getDeclaringClass()->getName();
+//			$propertyName = $reflection->getName();
+//			$parameters = $this->structure->getParameters();
+//			$key = $className . "::" . $propertyName;
+//			if (array_key_exists($key, $parameters)) {
+//				return $parameters[$key];
+//			}
+//		}
 
 		$name = $this->getName($annotation, $reflection);
 		$parameter = new Parameter($name);
@@ -94,7 +94,12 @@ class Builder
 
 		$setter = $annotation->getSetter();
 		if ($setter) {
-			$parameter->setSetter();
+			$parameter->setSetter($setter);
+		}
+
+		$getter = $annotation->getGetter();
+		if ($getter) {
+			$parameter->setGetter($getter);
 		}
 
 		$parameter->setType($annotation->getType());
@@ -198,9 +203,11 @@ class Builder
 		$reflection = new ReflectionClass($class);
 		$properties = $reflection->getProperties();
 		foreach ($properties as $property) {
-			$annotation = $this->reader->getPropertyAnnotation($property, API\IParameter::class);
-			if ($annotation instanceof API\IParameter) {
-				$this->createParameter($parent, $annotation, $property, $groups);
+			$annotations = $this->reader->getPropertyAnnotations($property);
+			foreach ($annotations as $annotation) {
+				if ($annotation instanceof API\IParameter) {
+					$this->createParameter($parent, $annotation, $property, $groups);
+				}
 			}
 		}
 	}
@@ -253,8 +260,8 @@ class Builder
 			$structure = $this->detectRecursiveStructure($parent, $parameter->getTypeClass(), $parent->getParameter()->getDeclareProperty());
 			if ($structure instanceof Field) {
 				$parStructure->setRecursive(TRUE);
-				foreach ($structure->getFields() as $name => $field) {
-					$parStructure->addField($name, $field);
+				foreach ($structure->getFields() as $field) {
+					$parStructure->addField($field->getName(), $field);
 				}
 				return $parStructure;
 			}

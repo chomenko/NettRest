@@ -199,7 +199,7 @@ class Field implements IStructure
 	 */
 	public function addField(string $name, IStructure $structure): void
 	{
-		$this->fields[$name] = $structure;
+		$this->fields[] = $structure;
 	}
 
 	/**

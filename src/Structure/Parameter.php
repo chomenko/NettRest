@@ -73,6 +73,16 @@ class Parameter
 	protected $nullable = FALSE;
 
 	/**
+	 * @var string|null
+	 */
+	protected $setter;
+
+	/**
+	 * @var string|null
+	 */
+	protected $getter;
+
+	/**
 	 * Parameter constructor.
 	 * @param string $name
 	 */
@@ -292,6 +302,38 @@ class Parameter
 	public function setNullable(bool $nullable): void
 	{
 		$this->nullable = $nullable;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getSetter(): ?string
+	{
+		return $this->setter;
+	}
+
+	/**
+	 * @param string|null $setter
+	 */
+	public function setSetter(?string $setter): void
+	{
+		$this->setter = $setter;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getGetter(): ?string
+	{
+		return $this->getter;
+	}
+
+	/**
+	 * @param string|null $getter
+	 */
+	public function setGetter(?string $getter): void
+	{
+		$this->getter = $getter;
 	}
 
 }

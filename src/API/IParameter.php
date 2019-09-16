@@ -65,6 +65,11 @@ interface IParameter
 	public function getSetter(): ?string;
 
 	/**
+	 * @return string|null
+	 */
+	public function getGetter(): ?string;
+
+	/**
 	 * @param string $type
 	 */
 	public function setType(string $type): void;

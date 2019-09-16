@@ -93,7 +93,19 @@ class ResponseDriver
 			$name = $field->getName();
 		}
 
-		$values = $this->getValue($name, $values);
+		$getter = $field->getParameter()->getGetter();
+		if ($getter) {
+			$origin = $values;
+			$values = $this->getValue($name, $values);
+			if (is_object($origin)) {
+				$ref = new \ReflectionClass(get_class($origin));
+				$method = $ref->getMethod($getter);
+				$values = $method->invokeArgs($origin, [$values, $field]);
+			}
+		} else {
+			$values = $this->getValue($name, $values);
+		}
+
 		if ($field->getParameter()->isCollection()) {
 			$values = $this->validateCollection($values);
 

@@ -75,9 +75,10 @@ class Request extends FieldsStructure
 	 */
 	protected function applyRaws(array $structure, array $urlParams, array $body): void
 	{
-		foreach ($structure as $name => $field) {
+		foreach ($structure as $field) {
 			$value = NULL;
 			$used = FALSE;
+			$name = $field->getName();
 			$parameter = $field->getParameter();
 
 			if (!$field->isUrlParameter() && array_key_exists($name, $body)) {
@@ -165,8 +166,6 @@ class Request extends FieldsStructure
 	 */
 	protected function createArgument(Field $field, $default = NULL, $ignoreCollection = FALSE)
 	{
-
-
 		$parameter = $field->getParameter();
 
 		if ($parameter->getType() === "object" && ((!$parameter->isCollection() && !$ignoreCollection)) || ($parameter->isCollection() && $ignoreCollection)) {
@@ -227,9 +226,15 @@ class Request extends FieldsStructure
 				$name = $field->getParameter()->getDeclareProperty();
 			}
 			$value = $this->createArgument($field);
+
+			$setter = $field->getParameter()->getSetter();
+			if ($setter) {
+				$method = $reflection->getMethod($setter);
+				$value = $method->invokeArgs($object, [$value, $field]);
+			}
+
 			$property = $reflection->getProperty($name);
 			$property->setAccessible(TRUE);
-//			var_dump($value);
 			$property->setValue($object, $value);
 			$property->setAccessible(FALSE);
 		}
@@ -290,7 +295,7 @@ class Request extends FieldsStructure
 		if ($fields === NULL) {
 			$fields = $this->getFields();
 		}
-		foreach ($fields as $name => $field) {
+		foreach ($fields as $field) {
 			if ($field instanceof Field && !$field->isValid()) {
 				$errors[] = $field;
 			}
