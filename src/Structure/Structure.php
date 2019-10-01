@@ -59,35 +59,6 @@ class Structure
 		$this->layout = new Layout();
 		$this->reader = $reader;
 		$this->cache = new Cache($storage, self::CACHE_NAME);
-		$this->loadCache();
-	}
-
-	private function loadCache()
-	{
-		$data = $this->cache->load("data", function () {
-			return [
-				"methods" => [],
-				"parameters" => [],
-				"layout" => new Layout(),
-			];
-		});
-
-		$this->methods = $data["methods"];
-		$this->parameters = $data["parameters"];
-		$this->layout = $data["layout"];
-	}
-
-	/**
-	 * @throws \Throwable
-	 */
-	private function removeCache()
-	{
-		$data = [
-			"methods" => $this->methods,
-			"parameters" => $this->parameters,
-			"layout" => new Layout(),
-		];
-		$this->cache->save("data", $data);
 	}
 
 	/**
@@ -128,12 +99,28 @@ class Structure
 	 */
 	public function routeInitialized(RouteCollection $collection)
 	{
-		$this->removeCache();
-		$factory = new Builder($this, $this->reader);
-		foreach ($this->routes as $data) {
-			$factory->buildMethod($data["route"], $data["method"], $data["annotation"]);
+		$data = $this->cache->load("data");
+		$empty = FALSE;
+		if (!$data) {
+			$empty = TRUE;
+			$data = [
+				"methods" => [],
+				"parameters" => [],
+				"layout" => new Layout(),
+			];
 		}
-		$this->saveCache();
+
+		$this->methods = $data["methods"];
+		$this->parameters = $data["parameters"];
+		$this->layout = $data["layout"];
+
+		if ($empty) {
+			$factory = new Builder($this, $this->reader);
+			foreach ($this->routes as $data) {
+				$factory->buildMethod($data["route"], $data["method"], $data["annotation"]);
+			}
+			$this->saveCache();
+		}
 	}
 
 	/**

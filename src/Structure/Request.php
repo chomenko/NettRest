@@ -195,11 +195,14 @@ class Request extends FieldsStructure
 			return $collection;
 		} elseif ($field->getParent() instanceof Request && $field->getParent()->getInto()) {
 			if (is_object($default)) {
+				if ($field->isUrlParameter()) {
+					return $default;
+				}
 				$reflection = new \ReflectionClass(get_class($default));
 				$this->setFieldsInObject($reflection, [$field], $default);
 				return $default;
 			} elseif (is_array($default)) {
-				//TODO::dopsat
+				return $default;
 			}
 		}
 
