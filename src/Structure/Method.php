@@ -292,10 +292,6 @@ class Method
 				$value = $parameter->getExample();
 			}
 			$parent = $parameter->getParent();
-			if ($parameter->getName() === "roles") {
-				barDump($parameter->isMultiple());
-				barDump($parameter);
-			}
 
 			if ($parent instanceof Parameter && $parent->isCollection()) {
 				$data[] = $value;

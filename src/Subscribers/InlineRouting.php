@@ -136,6 +136,10 @@ class InlineRouting extends Extension implements Subscriber
 			}
 			$presenter->sendJson($this->response);
 		}
+
+		if (!empty($this->response->getErrors())) {
+			$presenter->sendJson($this->response);
+		}
 	}
 
 	/**

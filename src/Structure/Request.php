@@ -265,23 +265,28 @@ class Request extends FieldsStructure
 
 	/**
 	 * @param Field[]|null $fields
+	 * @param bool $root
 	 * @return bool
 	 */
-	public function isValid(array $fields = NULL): bool
+	public function isValid(array $fields = NULL, $root = TRUE): bool
 	{
-		if ($fields === NULL) {
+		if ($fields === NULL && $root) {
 			$fields = $this->fields;
 		}
 		foreach ($fields as $parameter) {
 			if ($parameter->getParameter()->isCollection()) {
-				if (!$this->isValid($parameter->getCollection())) {
+				if (!empty($parameter->getCollection())) {
+					return $parameter->isValid();
+				}
+
+				if (!$this->isValid($parameter->getCollection(), FALSE)) {
 					return FALSE;
 				}
 			}
 			if (!$parameter->isValid()) {
 				return FALSE;
 			}
-			if (!$this->isValid($parameter->getFields())) {
+			if (!$this->isValid($parameter->getFields(), FALSE)) {
 				return FALSE;
 			}
 		}
