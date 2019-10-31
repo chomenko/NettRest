@@ -101,6 +101,11 @@ class Request extends FieldsStructure
 					foreach ($value as $data) {
 						if (!$first) {
 							$cloneField = clone $field;
+							$cloneFields = [];
+							foreach ($cloneField->getFields() as $fieldInstance) {
+								$cloneFields[] = clone $fieldInstance;
+							};
+							$cloneField->setFields($cloneFields);
 							$this->applyRaws($cloneField->getFields(), $urlParams, is_array($data) ? $data : [], $parameter);
 							$field->addCollectionItem($cloneField);
 						} else {

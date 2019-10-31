@@ -274,6 +274,20 @@ class Field implements IStructure
 				}
 			}
 
+			if (is_array($field->getValue()) && empty($field->getValue())) {
+				if ($field->isUsedInRequest()) {
+					if ($parameter->isRequired()) {
+						$field->addError("This value is required");
+						$field->setValid(FALSE);
+						return;
+					} else {
+						$field->addError("List of this value can't be empty.");
+						$field->setValid(FALSE);
+						return;
+					}
+				}
+			}
+
 			if ($field->isRequired() && !$field->isUsedInRequest()) {
 				$type = $field->isUrlParameter() ? "parameter" : "attribute";
 				$field->addError("Missing {$type} '{$field->getName()}'");
@@ -344,6 +358,14 @@ class Field implements IStructure
 	public function addCollectionItem(Field $field): void
 	{
 		$this->collection[] = $field;
+	}
+
+	/**
+	 * @param Field[] $fields
+	 */
+	public function setFields(array $fields)
+	{
+		$this->fields = $fields;
 	}
 
 }
